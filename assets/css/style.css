@@ -1,0 +1,210 @@
+/* ============================================================
+   STUDY BUDDY FINDER — Design System
+   Theme: "The Study Desk" — notebook paper, highlighter accents,
+   ink-dark navigation. Built on top of Tailwind (CDN) utilities.
+   ============================================================ */
+
+:root {
+  --ink: #14151A;        /* near-black, sidebar + headings */
+  --ink-soft: #24262F;   /* sidebar hover / secondary panels */
+  --paper: #F7F5EF;      /* warm paper background */
+  --card: #FFFFFF;
+  --lime: #D3FF5C;       /* highlighter accent — primary CTA */
+  --lime-deep: #A9E600;
+  --violet: #8C7CF0;     /* ink-purple accent — secondary */
+  --coral: #FF6B57;      /* alert / full / due-soon */
+  --sky: #5CC6FF;        /* tertiary tag color */
+  --muted: #83808F;
+  --line: #E7E3D8;       /* hairline / rule color */
+  --ring: rgba(211,255,92,0.45);
+}
+
+* { -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-data {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ---------- Notebook rule lines (signature motif) ---------- */
+.notebook-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    var(--line) 27px,
+    var(--line) 28px
+  );
+}
+
+.margin-rule {
+  position: relative;
+}
+.margin-rule::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 64px;
+  width: 1px;
+  background: rgba(255,107,87,0.25);
+}
+
+/* ---------- Sidebar ---------- */
+.sb-nav {
+  background: var(--ink);
+}
+.sb-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  color: #B7B5C2;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background .15s ease, color .15s ease;
+}
+.sb-link:hover {
+  background: var(--ink-soft);
+  color: #fff;
+}
+.sb-link.active {
+  background: var(--lime);
+  color: var(--ink);
+  font-weight: 600;
+}
+.sb-link.active svg { stroke: var(--ink); }
+.sb-link svg { stroke: #B7B5C2; }
+.sb-link:hover svg { stroke: #fff; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(20,21,26,0.03);
+}
+
+.session-card {
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.session-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px -12px rgba(20,21,26,0.18);
+}
+
+/* highlighter tab — signature element, colored by subject */
+.tab {
+  position: absolute;
+  top: 0; left: 22px;
+  width: 34px; height: 12px;
+  border-radius: 0 0 6px 6px;
+}
+.tab-lime   { background: var(--lime); }
+.tab-violet { background: var(--violet); }
+.tab-coral  { background: var(--coral); }
+.tab-sky    { background: var(--sky); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  background: var(--lime);
+  color: var(--ink);
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.7rem 1.3rem;
+  transition: background .15s ease, transform .1s ease;
+  box-shadow: 0 6px 16px -6px rgba(169,230,0,0.55);
+}
+.btn-primary:hover { background: var(--lime-deep); }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-dark {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.7rem 1.3rem;
+  transition: background .15s ease;
+}
+.btn-dark:hover { background: var(--ink-soft); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.68rem 1.25rem;
+  border: 1px solid var(--line);
+  transition: border-color .15s ease, background .15s ease;
+}
+.btn-ghost:hover { border-color: var(--ink); background: #fff; }
+
+/* ---------- Form fields ---------- */
+.field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: var(--paper);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--lime-deep);
+  box-shadow: 0 0 0 4px var(--ring);
+  background: #fff;
+}
+.field textarea { resize: vertical; min-height: 100px; }
+
+/* ---------- Misc ---------- */
+.progress-track { background: #EFECE2; border-radius: 999px; overflow: hidden; }
+.progress-fill { background: var(--lime); border-radius: 999px; }
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--ink);
+}
+
+::selection { background: var(--lime); color: var(--ink); }
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }

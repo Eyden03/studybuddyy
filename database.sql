@@ -1,0 +1,52 @@
+-- StudyBuddy Finder database for XAMPP / MariaDB
+-- Import this file in phpMyAdmin. The app also creates/upgrades these tables automatically.
+CREATE DATABASE IF NOT EXISTS studybuddy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE studybuddy;
+
+CREATE TABLE IF NOT EXISTS users (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, first_name VARCHAR(80) NOT NULL, last_name VARCHAR(80) NOT NULL,
+ school VARCHAR(160) NOT NULL, course_strand VARCHAR(160) NOT NULL, year_level VARCHAR(40) NOT NULL,
+ email VARCHAR(190) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, bio TEXT NULL, avatar_path VARCHAR(255) NULL,
+ role ENUM('user','admin') NOT NULL DEFAULT 'user', status ENUM('active','suspended') NOT NULL DEFAULT 'active',
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS study_sessions (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, host_id INT UNSIGNED NOT NULL, title VARCHAR(180) NOT NULL,
+ subject VARCHAR(120) NOT NULL, course_strand VARCHAR(160) NOT NULL, description TEXT NOT NULL, location VARCHAR(220) NOT NULL,
+ session_date DATE NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, capacity INT UNSIGNED NOT NULL,
+ estimated_expenses DECIMAL(10,2) NOT NULL DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+ FOREIGN KEY(host_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS session_participants (
+ session_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY(session_id,user_id), FOREIGN KEY(session_id) REFERENCES study_sessions(id) ON DELETE CASCADE,
+ FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS notifications (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id INT UNSIGNED NOT NULL, actor_id INT UNSIGNED NULL,
+ session_id INT UNSIGNED NULL, title VARCHAR(160) NOT NULL, body VARCHAR(255) NOT NULL, is_read TINYINT(1) DEFAULT 0,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+ FOREIGN KEY(actor_id) REFERENCES users(id) ON DELETE SET NULL, FOREIGN KEY(session_id) REFERENCES study_sessions(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS reports (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, reporter_id INT UNSIGNED NOT NULL, reported_user_id INT UNSIGNED NULL,
+ session_id INT UNSIGNED NULL, category VARCHAR(60) NOT NULL, details TEXT NOT NULL,
+ status ENUM('open','reviewing','resolved','dismissed') NOT NULL DEFAULT 'open', admin_notes TEXT NULL,
+ handled_by INT UNSIGNED NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+ FOREIGN KEY(reporter_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY(reported_user_id) REFERENCES users(id) ON DELETE SET NULL,
+ FOREIGN KEY(session_id) REFERENCES study_sessions(id) ON DELETE SET NULL, FOREIGN KEY(handled_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS admin_actions (
+ id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, admin_id INT UNSIGNED NULL, action VARCHAR(80) NOT NULL,
+ target_type VARCHAR(40) NOT NULL, target_id INT UNSIGNED NULL, details VARCHAR(255) NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(admin_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Admin password is created securely by the PHP app on first launch:
+-- admin@studybuddy.local / admin123
